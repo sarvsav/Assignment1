@@ -1,8 +1,17 @@
 #include <SDL/SDL.h>
 #include <stdio.h>
 
+#define SCREENDIVIDER 2
+#define RECTANGLE_WIDTH 20
+#define INTERVAL_TIME 5000
+#define MAX_COLORS 3
+
+typedef enum _BoxColor { RED = 1,
+                         GREEN,
+                         BLUE} BoxColor;
+
 int main(int argc, char *argv[])
-  {
+{
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Surface* screen;
     const int ScreenWidth = 640;
@@ -10,47 +19,47 @@ int main(int argc, char *argv[])
     screen = SDL_SetVideoMode(ScreenWidth, ScreenHeight, 32, SDL_SWSURFACE);
     bool running = true;
     const int FPS = 30;
+    BoxColor boxcolor;
+    boxcolor = RED;
 
     Uint32 start;
     SDL_Rect rect;
-    rect.w = 20;
-    rect.h = 20;
-    rect.x = ScreenWidth/2 - rect.w/2;
-    rect.y = ScreenHeight/2 - rect.h/2;
+    rect.w = RECTANGLE_WIDTH;
+    rect.h = RECTANGLE_WIDTH;
+    rect.x = ScreenWidth/SCREENDIVIDER - rect.w/SCREENDIVIDER;
+    rect.y = ScreenHeight/SCREENDIVIDER - rect.h/SCREENDIVIDER;
 
     Uint32 ScreenColor = SDL_MapRGB(screen->format, 0xcf, 0xcf, 0xcf);
     Uint32 RectColor;
 
-    int rounds = 1;
     int time1 = 0;
 
     while (running) {
       start = SDL_GetTicks();
       SDL_Event event;
 
-      while (SDL_PollEvent(&event))
-      {
+      while (SDL_PollEvent(&event)) {
         switch (event.type) {
           case SDL_QUIT: running = false;
             break;
         }
       }
 
-      if (start > time1 + 5000) {
-        if (rounds >= 3) // Resets color counter
-          rounds = 1;
+      if (start > time1 + INTERVAL_TIME) {
+        if (boxcolor >= MAX_COLORS) // Resets color counter
+          boxcolor = RED;
         else
-          rounds++;
+          boxcolor = (BoxColor)((int)(boxcolor)+1); //Find some alternative
 
         time1 = start;
       }
 
-      switch (rounds) {
-        case 1: RectColor = SDL_MapRGB(screen->format, 255, 0, 0);
+      switch (boxcolor) {
+        case RED: RectColor = SDL_MapRGB(screen->format, 255, 0, 0);
           break;
-        case 2: RectColor = SDL_MapRGB(screen->format, 0, 255, 0);
+        case BLUE: RectColor = SDL_MapRGB(screen->format, 0, 255, 0);
           break;
-        case 3: RectColor = SDL_MapRGB(screen->format, 0, 0, 255);
+        case GREEN: RectColor = SDL_MapRGB(screen->format, 0, 0, 255);
           break;
       }
 
