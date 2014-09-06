@@ -1,4 +1,3 @@
-
 #include <SDL/SDL.h>
 #include <stdio.h>
 
@@ -12,7 +11,7 @@ typedef enum _BoxColor { RED = 1,
                          BLUE} BoxColor;
 
 BoxColor color_timer(Uint32 & start, int & time2, BoxColor color);
-int render_screen(SDL_Surface screen, SDL_Rect rect, Uint32 ScreenColor, Uint32 RectColor);
+int render_screen(SDL_Surface* screen, SDL_Rect rect, Uint32 ScreenColor, Uint32 RectColor);
 
 
 // ------------------------------------
@@ -29,7 +28,7 @@ int main(int argc, char *argv[])
   const int FPS = 30;
   BoxColor boxcolor;
   boxcolor = RED;
-  
+
   Uint32 start;
   SDL_Rect rect;
   rect.w = RECTANGLE_WIDTH;
@@ -43,7 +42,7 @@ int main(int argc, char *argv[])
 
   Uint32 * pstart = &start;
   int * ptime1 = &time1;
-  
+
   while (running)
   {
     start = SDL_GetTicks();
@@ -68,12 +67,14 @@ int main(int argc, char *argv[])
         break;
     }
 
-    render_screen(SDL_Surface screen);
+    //render_screen(SDL_Surface screen);
+    render_screen(screen, rect, ScreenColor, RectColor); //whenever you make a call function, you dont have to provide its type
+                          //render_screen need 4 parametes, and you provided just 1
 
     if (1000/FPS > SDL_GetTicks()-start)
       SDL_Delay (1000/FPS-(SDL_GetTicks()-start));
   }
-  
+
   SDL_Quit();
   return 0;
 }
@@ -81,7 +82,7 @@ int main(int argc, char *argv[])
 // ------------------------------------
 // Screen rendering
 // ------------------------------------
-int render_screen(SDL_Surface screen, SDL_Rect rect, Uint32 ScreenColor, Uint32 RectColor)
+int render_screen(SDL_Surface* screen, SDL_Rect rect, Uint32 ScreenColor, Uint32 RectColor)
 {
   SDL_FillRect(screen, &screen->clip_rect, ScreenColor);
   SDL_FillRect(screen, &rect, RectColor);
